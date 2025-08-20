@@ -16,7 +16,7 @@
 # melancolia20i
 # listening to: magia negra - doble porcion
 
-objs  = mc.o text.o globl.o buffer.o
+objs  = mc.o text.o globl.o buffer.o morse.o
 flags =
 std   =
 as    = as

@@ -38,6 +38,7 @@ _start:
 	je	.mode_text
 	jmp	.display_usage
 .mode_morse:
+	call	Morse
 	jmp	.exit
 .mode_text:
 	call	Text
