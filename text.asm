@@ -27,6 +27,7 @@ Text:
 	cmpb	$0, %dil
 	je	.text_return
 	call	.Morseable
+	cmpq	$0, %rax
 	jz	.text_unmappable
 	cmpb	$'a', %dil
 	jge	.text_fit_into_0_25
@@ -51,13 +52,16 @@ Text:
 	call	BufferWrite
 	jmp	.text_inc
 .text_map_to_space:
-	movq	$26, %rdi
+	movq	$27, %rdi
 	call	BufferByte
 .text_inc:
+	movq	$26, %rdi
+	call	BufferByte
 	incq	%r8
 	jmp	.text_loop
 .text_return:
 	ret
+
 .Morseable:
 	cmpb	$'0', %dil
 	jl	.morseable_no
