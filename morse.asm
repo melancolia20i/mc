@@ -17,9 +17,7 @@
 # listening to: trois neuf trois - 39bermuda
 
 .section .bss
-	# stores the current token as it is given; its length
-	# is 6 since the max length for a morse code is 5 + \0
-	.thistoken: .zero 6
+	.thistoken: .zero 8
 
 	# this flag is set to 1 when a '/' is found wihtout previous ' '
 	# such as : ../.-
@@ -62,24 +60,45 @@ Morse:
 	movq	$26, %rdi
 	call	BufferByte
 	jmp	.morse_inc
-	
-.morse_gotoken:
-	movq	$1, %rax
-	movq	$1, %rdi
-	leaq	.thistoken(%rip), %rsi
-	movq	%r14, %rdx
-	syscall
+.morse_gotoken:	
+	leaq	morse__(%rip), %r9
+	movq	$0, %r10
+.morse_gotoken_loop:
+	cmpq	$36, %r10
+	je	.morse_gotoken_unk
+	movq	(%r9, %r10, 8), %rsi
+	call	.Strcmp
+	cmpq	$1, %rax
+	je	.morse_gotoken_ok
+	incq	%r10
+	jmp	.morse_gotoken_loop
+.morse_gotoken_ok:
+	movq	%r10, %rdi
+	call	BufferByte
+	jmp	.morse_gotoken_check_flag
+.morse_gotoken_unk:
+	leaq	cannotMap(%rip), %rdi
+	call	BufferWrite
+.morse_gotoken_check_flag:
+	movb	$1, (.spaceafter)
+	jne	.morse_gotoken_clean
+	movq	$26, %rdi
+	call	BufferByte
+	movb	$0, (.spaceafter)
+.morse_gotoken_clean:
+	movq	$0, %r14
+	movq	$0, (.thistoken)
+	leaq	.thistoken(%rip), %r15
 
-	movq	$60, %rax
-	movq	$60, %rdi
-	syscall
+
+# TODO: check flags
+# TODO: make sure r14 does not go beyond 5
 
 .morse_inc:
 	incq	%r8
 	jmp	.morse_loop
 .morse_return:
 	ret
-
 .Collectable:
 	movq	$1, %rax
 	cmpb	$'-', %dil
@@ -88,4 +107,25 @@ Morse:
 	je	.coll_ret
 	movq	$0, %rax
 .coll_ret:
+	ret
+
+
+.Strcmp:	
+	leaq	.thistoken(%rip), %rdi
+.strcmp_loop:
+	movzbl	(%rdi), %eax
+	movzbl	(%rsi), %ebx
+	cmpb	%al, %bl
+	jne	.strcmp_pas_meme	
+	cmpb	$0, %al
+	je	.strcmp_equal
+	incq	%rdi
+	incq	%rsi
+	jmp	.strcmp_loop
+.strcmp_equal:
+	movq	$1, %rax
+	jmp	.strcmp_return
+.strcmp_pas_meme:
+	movq	$0, %rax
+.strcmp_return:
 	ret
