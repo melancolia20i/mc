@@ -21,6 +21,11 @@
 	# is 6 since the max length for a morse code is 5 + \0
 	.thistoken: .zero 6
 
+	# this flag is set to 1 when a '/' is found wihtout previous ' '
+	# such as : ../.-
+	#             ` print '..' translated and then the actual space ' '
+	.spaceafter: .zero 1
+
 .section .text
 
 .globl Morse
@@ -38,7 +43,6 @@ Morse:
 	call	.Collectable
 	cmpq	$0, %rax
 	je	.morse_uncoll
-
 	movb	%dil, (%r15)
 	incq	%r15
 	incq	%r14
@@ -48,17 +52,31 @@ Morse:
 	je	.morse_gotoken
 	cmpb	$'/', %dil
 	je	.morse_space
+	jmp	.morse_inc
+.morse_space:
+	cmpq	$0, %r14
+	je	.morse_print_actual_space
+	movb	$1, (.spaceafter)
+	jmp	.morse_gotoken
+.morse_print_actual_space:
+	movq	$26, %rdi
+	call	BufferByte
+	jmp	.morse_inc
+	
 .morse_gotoken:
+	movq	$1, %rax
+	movq	$1, %rdi
+	leaq	.thistoken(%rip), %rsi
+	movq	%r14, %rdx
+	syscall
+
 	movq	$60, %rax
 	movq	$60, %rdi
 	syscall
 
-.morse_space:
-	movq	$26, %rdi
-	call	BufferByte
 .morse_inc:
 	incq	%r8
-
+	jmp	.morse_loop
 .morse_return:
 	ret
 
@@ -67,8 +85,6 @@ Morse:
 	cmpb	$'-', %dil
 	je	.coll_ret
 	cmpb	$'.', %dil
-	je	.coll_ret
-	cmpb	$'/', %dil
 	je	.coll_ret
 	movq	$0, %rax
 .coll_ret:
