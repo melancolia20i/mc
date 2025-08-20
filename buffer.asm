@@ -31,7 +31,7 @@ BufferByte:
 .globl BufferWrite
 BufferWrite:
 	movq	(.buf_at), %rcx
-	xorq	%rcx, %rcx
+	xorq	%rbx, %rbx
 .bw_loop:
 	movq	.buff_length(%rip), %rax
 	cmpq	%rcx, %rax
@@ -55,8 +55,8 @@ BufferWrite:
 BufferFlush:
 	movq	$1, %rax
 	movq	$1, %rdi
-	movq	(.buff_length), %rdx
 	leaq	.buffer(%rip), %rsi
+	movq	.buf_at(%rip), %rdx
 	syscall
-	movq	$0, (.buff_length)
+	movq	$0, (.buf_at)
 	ret
