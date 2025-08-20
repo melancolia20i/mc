@@ -27,15 +27,29 @@
 _start:
 	popq	%rax
 	cmpq	$3, %rax
-	jne	.display_usage_and_exit
-
-
-.display_usage_and_exit:
+	jne	.display_usage
+	popq	%rax
+	popq	%rax
+	popq	%r8
+	movzbl	(%rax), %eax
+	cmpb	$'m', %al
+	je	.mode_morse
+	cmpb	$'t', %al
+	je	.mode_text
+	jmp	.display_usage
+.mode_morse:
+	jmp	.exit
+.mode_text:
+	call	Text
+	jmp	.exit
+.display_usage:
 	movq	$1, %rax
 	movq	$2, %rdi
 	leaq	.usage_msg(%rip), %rsi
 	movq	.usage_len(%rip), %rdx
 	syscall
+.exit:
+	call	BufferFlush
 	movq	$60, %rax
 	movq	$0, %rdi
 	syscall
