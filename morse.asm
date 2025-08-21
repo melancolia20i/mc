@@ -52,15 +52,12 @@ Morse:
 	je	.morse_space
 	jmp	.morse_inc
 .morse_space:
-	cmpq	$0, %r14
-	je	.morse_print_actual_space
-	movb	$1, (.spaceafter)
-	jmp	.morse_gotoken
-.morse_print_actual_space:
 	movq	$26, %rdi
 	call	BufferByte
 	jmp	.morse_inc
 .morse_gotoken:	
+	cmpq	$0, %r14
+	je	.morse_inc
 	leaq	morse__(%rip), %r9
 	movq	$0, %r10
 .morse_gotoken_loop:
