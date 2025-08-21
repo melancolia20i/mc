@@ -1,0 +1,34 @@
+
+	          ____           
+	        ,'  , `.         
+	     ,-+-,.' _ |         
+	  ,-+-. ;   , ||         
+	 ,--.'|'   |  || ,---.   
+	|   |  ,', |  |,/     \  
+	|   | /  | |--'/    / '  
+	|   : |  | ,  .    ' /   
+	|   : |  |/   '   ; :__  
+	|   | |`-'    '   | '.'| 
+	|   ;/        |   :    : 
+	'---'          \   \  /  
+	                `----'   
+	                         
+	Aug 21 2025
+	melancolia20i
+	listening to: no music
+
+	~ Description:
+	'mc' is a morse encoder and decoder written in x86_64 for the seek of learning, yet it works
+	perfectly even though nobody is ever going to use this jaja
+
+	~ Usage
+	$ make
+	$ ./mc [mode] "[message]"
+
+	where mode can either be 'm' for translating morse code into text or 't' for doing the opposite
+
+	~ minor issues
+	when the mode selected is 'm', the user will have to add a trailing space to the message since
+	whenever a whitespace is found the code previous to that space is translated, if no space is added
+	the last code will not be taken into account.
+
