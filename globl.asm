@@ -24,7 +24,7 @@
 	cannotMap:  .string "<?>"
 	.globl cannotMap
 
-	enAlphabet: .string "abcdefghijklmnopqrstuvwxyz /\n"
+	enAlphabet: .string "abcdefghijklmnopqrstuvwxyz0123456789 /\n"
 	.globl enAlphabet
 
 	.ma: .string ".-"

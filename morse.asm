@@ -24,6 +24,9 @@
 	#             ` print '..' translated and then the actual space ' '
 	.spaceafter: .zero 1
 
+.section .rodata
+	.thistokenlen: .quad 8
+
 .section .text
 
 .globl Morse
@@ -41,6 +44,8 @@ Morse:
 	call	.Collectable
 	cmpq	$0, %rax
 	je	.morse_uncoll
+	cmpq	(.thistokenlen), %r14
+	je	.morse_gotoken
 	movb	%dil, (%r15)
 	incq	%r15
 	incq	%r14
@@ -75,17 +80,13 @@ Morse:
 .morse_gotoken_check_flag:
 	cmpb	$1, (.spaceafter)
 	jne	.morse_gotoken_clean
-	movq	$26, %rdi
+	movq	$36, %rdi
 	call	BufferByte
 	movb	$0, (.spaceafter)
 .morse_gotoken_clean:
 	movq	$0, %r14
 	movq	$0, (.thistoken)
 	leaq	.thistoken(%rip), %r15
-
-# TODO: check flags
-# TODO: make sure r14 does not go beyond 5
-
 .morse_inc:
 	incq	%r8
 	jmp	.morse_loop
@@ -100,7 +101,6 @@ Morse:
 	movq	$0, %rax
 .coll_ret:
 	ret
-
 
 .Strcmp:	
 	leaq	.thistoken(%rip), %rdi

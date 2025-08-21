@@ -52,10 +52,10 @@ Text:
 	call	BufferWrite
 	jmp	.text_inc
 .text_map_to_space:
-	movq	$27, %rdi
+	movq	$37, %rdi
 	call	BufferByte
 .text_inc:
-	movq	$26, %rdi
+	movq	$36, %rdi
 	call	BufferByte
 	incq	%r8
 	jmp	.text_loop

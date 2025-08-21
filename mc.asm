@@ -50,7 +50,7 @@ _start:
 	movq	.usage_len(%rip), %rdx
 	syscall
 .exit:
-	movq	$28, %rdi
+	movq	$38, %rdi
 	call	BufferByte
 	call	BufferFlush
 	movq	$60, %rax
