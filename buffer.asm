@@ -69,7 +69,7 @@ BufferFlush:
 	movq	$1, %rax
 	movq	$1, %rdi
 	leaq	.buffer(%rip), %rsi
-	movq	.buff_length(%rip), %rdx
+	movq	.buf_at(%rip), %rdx
 	syscall
 	movq	$0, (.buf_at)
 	movq	$0, %r9

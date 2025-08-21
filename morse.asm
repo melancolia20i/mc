@@ -49,15 +49,11 @@ Morse:
 	cmpb	$' ', %dil
 	je	.morse_gotoken
 	cmpb	$'/', %dil
-	je	.morse_space
-	jmp	.morse_inc
-.morse_space:
-	movq	$26, %rdi
-	call	BufferByte
-	jmp	.morse_inc
+	jne	.morse_inc
+	movb	$1, (.spaceafter)
 .morse_gotoken:	
 	cmpq	$0, %r14
-	je	.morse_inc
+	je	.morse_gotoken_check_flag
 	leaq	morse__(%rip), %r9
 	movq	$0, %r10
 .morse_gotoken_loop:
@@ -77,7 +73,7 @@ Morse:
 	leaq	cannotMap(%rip), %rdi
 	call	BufferWrite
 .morse_gotoken_check_flag:
-	movb	$1, (.spaceafter)
+	cmpb	$1, (.spaceafter)
 	jne	.morse_gotoken_clean
 	movq	$26, %rdi
 	call	BufferByte
@@ -86,7 +82,6 @@ Morse:
 	movq	$0, %r14
 	movq	$0, (.thistoken)
 	leaq	.thistoken(%rip), %r15
-
 
 # TODO: check flags
 # TODO: make sure r14 does not go beyond 5
