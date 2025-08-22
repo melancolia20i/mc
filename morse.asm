@@ -17,7 +17,9 @@
 # listening to: trois neuf trois - 39bermuda
 
 .section .bss
-	.thistoken: .zero 8
+	# the current token is going to be stored in here, it is 6 bytes long
+	# since the max length for a token is 'maxlength' + 1 for the null byte
+	.thistoken: .zero 6
 
 	# this flag is set to 1 when a '/' is found wihtout previous ' '
 	# such as : ../.-
@@ -25,7 +27,7 @@
 	.spaceafter: .zero 1
 
 .section .rodata
-	.thistokenlen: .quad 8
+	.maxlength: .quad 5
 
 .section .text
 
@@ -44,7 +46,7 @@ Morse:
 	call	.Collectable
 	cmpq	$0, %rax
 	je	.morse_uncoll
-	cmpq	(.thistokenlen), %r14
+	cmpq	(.maxlength), %r14
 	je	.morse_gotoken
 	movb	%dil, (%r15)
 	incq	%r15
